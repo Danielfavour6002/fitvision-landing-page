@@ -10,17 +10,18 @@ async function logEvent(eventType: string, metadata?: Record<string, unknown>) {
 
 async function submitEmail(email: string): Promise<{ discountCode: string; alreadyRegistered: boolean } | null> {
   try {
-    const { error } = await supabase.from("email_signups").insert({ email });
+    const { error } = await supabase.from("waitlist").insert({ email });
     if (error) {
+      console.error("Supabase error:", error); // ADD THIS
       if (error.code === "23505") return { discountCode: "", alreadyRegistered: true };
       return null;
     }
     return { discountCode: "", alreadyRegistered: false };
-  } catch {
+  } catch (e) {
+    console.error("Caught error:", e); // ADD THIS
     return null;
   }
 }
-
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
