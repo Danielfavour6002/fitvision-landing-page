@@ -427,7 +427,7 @@ function FAQSection() {
     },
     {
       q: "Is it really built in Nigeria?",
-      a: "100%. Built in Lagos by Nigerian developers. We're proud of that — and we think it gives us a unique perspective on building affordable, accessible fitness tech.",
+      a: "100%. Built by Nigerian developers. We're proud of that — and we think it gives us a unique perspective on building affordable, accessible fitness tech.",
     },
   ];
 
@@ -511,7 +511,7 @@ function PricingSection({ onProClick }: { onProClick: () => void }) {
             <p className="text-[#39FF14] font-black text-sm uppercase tracking-widest mb-0.5">Pro Coach</p>
             <p className="text-white/30 text-[10px] uppercase tracking-wider mb-5">The complete AI experience</p>
             <div className="flex items-end gap-1.5 mb-7">
-              <span className="text-5xl font-black text-white leading-none">$14.99</span>
+              <span className="text-5xl font-black text-white leading-none">$9.99</span>
               <span className="text-white/30 text-sm mb-1">/mo</span>
             </div>
             <ul className="space-y-2.5 mb-8 flex-1">
@@ -574,7 +574,7 @@ function ProModal({ onClose }: { onClose: () => void }) {
         </div>
         <h3 className="font-montserrat font-black text-white uppercase text-xl tracking-wider mb-3">Coming Soon</h3>
         <p className="text-white/80 text-sm leading-relaxed mb-7">
-          We're perfecting the live-voice feature in private beta. You're noted as interested and will be <span className="text-[#39FF14] font-semibold">first in line</span> for Pro.
+          We're perfecting the live-video feature in private beta. You're noted as interested and will be <span className="text-[#39FF14] font-semibold">first in line</span> for Pro.
         </p>
         <button onClick={onClose}
           className="w-full bg-[#39FF14] text-black font-black text-[10px] py-3.5 rounded-lg uppercase tracking-[0.15em] hover:brightness-110 transition-all">
@@ -589,7 +589,7 @@ function Footer() {
   return (
     <footer className="bg-black border-t border-white/5 py-10 px-5 text-center">
       <p className="font-montserrat font-black text-white text-[11px] tracking-[0.3em] uppercase mb-2">FitVision AI</p>
-      <p className="text-white/25 text-[10px] mb-5">Built with 🇳🇬 in Lagos, Nigeria</p>
+      <p className="text-white/25 text-[10px] mb-5">Built with love from Nigeria</p>
       <div className="flex flex-wrap items-center justify-center gap-6 mb-5">
         {["Terms", "Privacy", "Twitter", "Instagram"].map((link) => (
           <a key={link} href="#" className="text-white/25 hover:text-white/60 text-[9px] uppercase tracking-[0.2em] transition-colors">{link}</a>
