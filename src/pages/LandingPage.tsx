@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import { supabase } from "@/lib/supabase";
 
 async function logEvent(eventType: string, metadata?: Record<string, unknown>) {
@@ -8,36 +7,45 @@ async function logEvent(eventType: string, metadata?: Record<string, unknown>) {
   } catch {}
 }
 
-async function submitEmail(email: string): Promise<{ discountCode: string; alreadyRegistered: boolean } | null> {
+async function submitEmail(
+  email: string
+): Promise<{ discountCode: string; alreadyRegistered: boolean } | null> {
   try {
     const { error } = await supabase.from("waitlist").insert({ email });
     if (error) {
-      console.error("Supabase error:", error); // ADD THIS
       if (error.code === "23505") return { discountCode: "", alreadyRegistered: true };
       return null;
     }
     return { discountCode: "", alreadyRegistered: false };
-  } catch (e) {
-    console.error("Caught error:", e); // ADD THIS
+  } catch {
     return null;
   }
 }
+
+// ─── NAVBAR ──────────────────────────────────────────────────────────────────
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-5 py-3 bg-black/95 backdrop-blur-sm border-b border-white/5">
-      <span className="font-montserrat font-black text-white text-xs tracking-[0.25em] uppercase">FitVision AI</span>
+    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-black/95 backdrop-blur-sm border-b border-white/8">
+      <span className="font-montserrat font-black text-white text-sm tracking-[0.25em] uppercase">
+        FitVision AI
+      </span>
       <div className="hidden md:flex items-center gap-8">
-        {["How It Works", "About", "FAQ", "Pricing"].map((item) => (
-          <a key={item} href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
-            className="text-white/50 hover:text-white text-[10px] font-bold tracking-[0.2em] uppercase transition-colors">
+        {["How It Works", "Features", "FAQ", "Pricing"].map((item) => (
+          <a
+            key={item}
+            href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
+            className="text-white/60 hover:text-white text-[11px] font-semibold tracking-[0.15em] uppercase transition-colors"
+          >
             {item}
           </a>
         ))}
       </div>
-      <a href="#waitlist"
-        className="hidden md:inline-flex bg-[#39FF14] text-black font-black text-[10px] px-5 py-2.5 rounded tracking-[0.15em] uppercase hover:brightness-110 transition-all">
-        Join Waitlist
+      <a
+        href="#waitlist"
+        className="hidden md:inline-flex bg-[#39FF14] text-black font-black text-[10px] px-5 py-2.5 rounded tracking-[0.15em] uppercase hover:brightness-110 transition-all"
+      >
+        Join Waitlist — Free
       </a>
       <button className="md:hidden text-white p-1" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
         <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
@@ -46,20 +54,21 @@ function Navbar() {
       </button>
       {menuOpen && (
         <div className="absolute top-full left-0 right-0 bg-black border-b border-white/10 flex flex-col items-center gap-5 py-6 md:hidden">
-          {["How It Works", "About", "FAQ", "Pricing"].map((item) => (
+          {["How It Works", "Features", "FAQ", "Pricing"].map((item) => (
             <a key={item} href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
-              className="text-white/60 text-[10px] font-bold tracking-[0.2em] uppercase"
+              className="text-white/70 text-[11px] font-semibold tracking-[0.15em] uppercase"
               onClick={() => setMenuOpen(false)}>{item}</a>
           ))}
           <a href="#waitlist"
             className="bg-[#39FF14] text-black font-black text-[10px] px-5 py-2.5 rounded tracking-[0.15em] uppercase"
-            onClick={() => setMenuOpen(false)}>Join Waitlist</a>
+            onClick={() => setMenuOpen(false)}>Join Waitlist — Free</a>
         </div>
       )}
     </nav>
   );
 }
 
+// ─── WAITLIST FORM ────────────────────────────────────────────────────────────
 function WaitlistForm({ compact = false }: { compact?: boolean }) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -84,16 +93,16 @@ function WaitlistForm({ compact = false }: { compact?: boolean }) {
 
   if (submitted) {
     return (
-      <div className={`bg-[#0a1a0a] border border-[#39FF14]/40 rounded-xl px-5 py-4 text-left ${compact ? "max-w-md" : "w-full max-w-lg"}`}>
+      <div className={`bg-[#0a1a0a] border border-[#39FF14]/50 rounded-xl px-5 py-4 text-left ${compact ? "max-w-md" : "w-full max-w-lg"}`}>
         <div className="flex items-center gap-3">
-          <span className="w-7 h-7 rounded-full bg-[#39FF14] flex items-center justify-center flex-shrink-0">
+          <span className="w-8 h-8 rounded-full bg-[#39FF14] flex items-center justify-center flex-shrink-0">
             <svg className="w-4 h-4" fill="none" stroke="black" strokeWidth="3" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           </span>
           <div>
             <p className="text-[#39FF14] font-black text-sm uppercase tracking-wider">You're on the list!</p>
-            <p className="text-white/50 text-[11px] mt-0.5">We'll notify you the moment we launch. 🚀</p>
+            <p className="text-white/70 text-[12px] mt-0.5">We'll notify you the moment we launch. Early access pricing reserved. 🚀</p>
           </div>
         </div>
       </div>
@@ -106,11 +115,11 @@ function WaitlistForm({ compact = false }: { compact?: boolean }) {
         <input
           type="email" required placeholder="Enter your email"
           value={email} onChange={(e) => setEmail(e.target.value)}
-          className="flex-1 bg-white/8 border border-white/15 text-white placeholder-white/25 rounded-lg px-4 py-3.5 text-sm focus:outline-none focus:border-[#39FF14]/50 transition-colors"
+          className="flex-1 bg-white/10 border border-white/20 text-white placeholder-white/40 rounded-lg px-4 py-3.5 text-sm focus:outline-none focus:border-[#39FF14]/60 transition-colors"
         />
         <button type="submit" disabled={loading}
           className="bg-[#39FF14] text-black font-black text-[10px] px-6 py-3.5 rounded-lg uppercase tracking-[0.1em] hover:brightness-110 active:scale-95 transition-all whitespace-nowrap disabled:opacity-60">
-          {loading ? "Joining..." : "Join the Waitlist"}
+          {loading ? "Joining..." : "Get Early Access — 50% Off"}
         </button>
       </form>
       {error && <p className="text-[#FF3131] text-[11px] mt-2">{error}</p>}
@@ -118,121 +127,141 @@ function WaitlistForm({ compact = false }: { compact?: boolean }) {
   );
 }
 
+// ─── VIDEO / DEMO PLACEHOLDER ─────────────────────────────────────────────────
 const VIDEO_SRC = `${import.meta.env.BASE_URL}fitvision-demo.mp4`;
 
 function VideoPlayer() {
   const [hasError, setHasError] = useState(false);
+  // Skeleton landmark diagram shown when no video
   const pts: [number, number][] = [[50,15],[50,30],[37,36],[63,36],[30,50],[70,50],[38,63],[62,63],[40,80],[60,80]];
   const lines: [number,number][] = [[0,1],[1,2],[1,3],[2,4],[3,5],[4,6],[5,7],[6,8],[7,9]];
   return (
     <div className="relative aspect-video bg-[#080808] flex items-center justify-center overflow-hidden">
       {!hasError ? (
-        <video
-          src={VIDEO_SRC}
-          autoPlay muted loop playsInline
-          className="w-full h-full object-cover"
-          onError={() => setHasError(true)}
-        />
+        <video src={VIDEO_SRC} autoPlay muted loop playsInline className="w-full h-full object-cover" onError={() => setHasError(true)} />
       ) : (
-        <div className="flex flex-col items-center justify-center p-6">
-          <svg viewBox="0 0 100 100" className="w-28 h-28 mb-3">
-            {lines.map(([a, b], i) => (
-              <line key={i} x1={pts[a][0]} y1={pts[a][1]} x2={pts[b][0]} y2={pts[b][1]}
-                stroke="#39FF14" strokeWidth="1" strokeOpacity="0.6" />
-            ))}
-            {pts.map(([x, y], i) => <circle key={i} cx={x} cy={y} r="2.5" fill="#39FF14" fillOpacity="0.9" />)}
-            <text x="54" y="53" fill="#39FF14" fontSize="7" fontWeight="bold">85°</text>
-          </svg>
-          <p className="text-white/30 text-xs text-center max-w-[200px]">AI tracking demo · Live in beta</p>
+        // Fallback shown until real demo video is recorded
+        <div className="flex flex-col items-center justify-center p-8 w-full h-full"
+          style={{ background: "radial-gradient(ellipse at center, #0d1f0d 0%, #080808 70%)" }}>
+          <div className="relative mb-4">
+            <svg viewBox="0 0 100 100" className="w-32 h-32">
+              {lines.map(([a, b], i) => (
+                <line key={i} x1={pts[a][0]} y1={pts[a][1]} x2={pts[b][0]} y2={pts[b][1]}
+                  stroke="#39FF14" strokeWidth="1.2" strokeOpacity="0.7" />
+              ))}
+              {pts.map(([x, y], i) => (
+                <circle key={i} cx={x} cy={y} r="2.8" fill="#39FF14" fillOpacity="0.9" />
+              ))}
+              <text x="54" y="53" fill="#39FF14" fontSize="7" fontWeight="bold">85°</text>
+            </svg>
+            {/* Pulsing ring */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-36 h-36 rounded-full border border-[#39FF14]/20 animate-ping" style={{ animationDuration: "2s" }} />
+            </div>
+          </div>
+          <p className="text-white font-bold text-sm mb-1">AI Body Tracking · Live Demo</p>
+          <p className="text-white/50 text-[11px] text-center max-w-[220px] leading-relaxed">
+            Real-time form analysis and voice coaching — recorded demo coming soon
+          </p>
+          {/* Simulated coaching overlay */}
+          <div className="mt-4 bg-black/70 border border-[#39FF14]/30 rounded-lg px-4 py-2.5 text-center">
+            <p className="text-[#39FF14] text-[10px] font-black tracking-wider animate-pulse">
+              🎤 "Lower your hips — go deeper on that squat!"
+            </p>
+          </div>
         </div>
       )}
     </div>
   );
 }
 
+// ─── HERO ─────────────────────────────────────────────────────────────────────
 function HeroSection() {
   return (
-    <section className="min-h-screen flex flex-col items-center justify-center text-center px-5 pt-24 pb-10 relative overflow-hidden"
-      style={{ background: "linear-gradient(180deg, #050f05 0%, #000000 55%)" }}>
+    <section className="min-h-screen flex flex-col items-center justify-center text-center px-5 pt-24 pb-16 relative overflow-hidden"
+      style={{ background: "linear-gradient(180deg, #050f05 0%, #000000 60%)" }}>
       <div className="absolute inset-0 pointer-events-none"
         style={{ background: "radial-gradient(ellipse 70% 45% at 50% 0%, rgba(57,255,20,0.09) 0%, transparent 70%)" }} />
+
       <div className="relative z-10 flex flex-col items-center w-full max-w-3xl">
-        <div className="inline-flex items-center gap-2 border border-[#39FF14]/40 rounded-full px-4 py-1.5 mb-7">
+
+        {/* Badge */}
+        <div className="inline-flex items-center gap-2 border border-[#39FF14]/40 rounded-full px-4 py-1.5 mb-8">
           <span className="w-1.5 h-1.5 rounded-full bg-[#39FF14] animate-pulse flex-shrink-0" />
-          <span className="text-[#39FF14] text-[9px] font-black tracking-[0.3em] uppercase">Beta Access Now Live</span>
+          <span className="text-[#39FF14] text-[9px] font-black tracking-[0.3em] uppercase">
+            Beta Access — Limited Spots Remaining
+          </span>
         </div>
-        <h1 className="font-montserrat font-black text-white uppercase leading-[0.93] mb-6">
-          <span className="block text-[clamp(2.2rem,8vw,4.8rem)]">Your AI Gym Coach</span>
-          <span className="block text-[clamp(2.2rem,8vw,4.8rem)]">Watches Your Form</span>
-          <span className="block text-[clamp(2.2rem,8vw,4.8rem)] text-[#39FF14] italic">In Real Time.</span>
+
+        {/* Headline */}
+        <h1 className="font-montserrat font-black text-white uppercase leading-[0.93] mb-7">
+          <span className="block text-[clamp(2.2rem,8vw,4.8rem)]">A World-Class</span>
+          <span className="block text-[clamp(2.2rem,8vw,4.8rem)] text-[#39FF14] italic">Personal Trainer</span>
+          <span className="block text-[clamp(2.2rem,8vw,4.8rem)]">In Your Pocket.</span>
         </h1>
-        <p className="text-white/80 text-sm md:text-base max-w-xl leading-relaxed mb-10">
-          Point your phone camera. Our AI instantly tracks 33 body landmarks, spots bad form, and talks you through every rep — like a world-class coach in your pocket.
+
+        {/* Subheading — high contrast */}
+        <p className="text-white text-base md:text-lg max-w-xl leading-relaxed mb-3 font-medium">
+          Point your phone camera. Coach Zara — our AI trainer — watches your form in real time,
+          corrects every rep, and talks you through your entire workout.
+        </p>
+        <p className="text-white/60 text-sm max-w-lg leading-relaxed mb-10">
+          No personal trainer fees. No guesswork. No injuries from bad form. Just results.
         </p>
 
-        <div className="w-full max-w-2xl mb-10">
-          <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-[#0a0a0a]"
-            style={{ boxShadow: "0 0 60px rgba(57,255,20,0.08)" }}>
-            <div className="flex items-center gap-2 px-4 py-2.5 bg-black/80 border-b border-white/5">
+        {/* Waitlist form above video */}
+        <div id="waitlist" className="flex flex-col items-center gap-3 w-full mb-12">
+          <WaitlistForm />
+          <p className="text-white/40 text-[11px] tracking-wider">
+            No credit card · No spam · Early access pricing reserved on signup
+          </p>
+        </div>
+
+        {/* Demo video */}
+        <div className="w-full max-w-2xl">
+          <div className="relative rounded-2xl overflow-hidden border border-white/12 bg-[#0a0a0a]"
+            style={{ boxShadow: "0 0 80px rgba(57,255,20,0.07), 0 25px 50px rgba(0,0,0,0.5)" }}>
+            <div className="flex items-center gap-2 px-4 py-3 bg-black/80 border-b border-white/8">
               <span className="w-1.5 h-1.5 rounded-full bg-[#39FF14] animate-pulse" />
-              <span className="text-[#39FF14] text-[9px] font-black tracking-widest uppercase">Live Demo</span>
-              <span className="ml-auto text-white/20 text-[9px]">AI Coaching · Real Time</span>
+              <span className="text-[#39FF14] text-[9px] font-black tracking-widest uppercase">Coach Zara · Live Session</span>
+              <span className="ml-auto text-white/30 text-[9px] font-medium">Real-Time AI Coaching</span>
             </div>
             <VideoPlayer />
           </div>
-        </div>
-
-        <div id="waitlist" className="flex flex-col items-center gap-3 w-full">
-          <WaitlistForm />
-          <p className="text-white/25 text-[10px] tracking-wider">No credit card. No spam. Just early access.</p>
         </div>
       </div>
     </section>
   );
 }
 
+// ─── HOW IT WORKS ─────────────────────────────────────────────────────────────
 function HowItWorksSection() {
   const steps = [
-    {
-      num: "01",
-      title: "Prop It Up",
-      desc: "Place your phone on any surface or tripod aimed at you. No wearables, no special equipment.",
-      img: "/img-panel1.png",
-    },
-    {
-      num: "02",
-      title: "AI Sees You",
-      desc: "Our computer vision instantly maps 33 body landmarks and tracks every movement in real time.",
-      img: "/img-panel2.png",
-    },
-    {
-      num: "03",
-      title: "Live Voice Coaching",
-      desc: "Hear instant cues: \"Back straight!\", \"Go deeper!\", \"Great rep!\" — as you're moving.",
-      img: "/img-panel3.png",
-    },
+    { num: "01", title: "Prop It Up", desc: "Place your phone on any surface aimed at you. No wearables, no special equipment, no gym hardware required." , img: "/img-panel1.png" },
+    { num: "02", title: "AI Sees You", desc: "Our computer vision instantly maps 33 body landmarks and tracks every movement across your entire workout.", img: "/img-panel2.png" },
+    { num: "03", title: "Live Voice Coaching", desc: 'Hear real-time cues as you move: "Back straight!", "Go deeper!", "Perfect rep!" — from an AI coach that never stops watching.', img: "/img-panel3.png" },
   ];
-
   return (
-    <section id="how-it-works" className="py-20 px-5 bg-[#030803]">
+    <section id="how-it-works" className="py-24 px-5 bg-[#030803]">
       <div className="max-w-5xl mx-auto">
-        <p className="text-[#39FF14] text-[9px] font-black tracking-[0.35em] uppercase mb-3">How It Works</p>
-        <h2 className="font-montserrat font-black text-white uppercase text-[clamp(1.8rem,5vw,3rem)] leading-tight mb-2">
-          Three Steps.<br />
-          <span className="text-[#39FF14] italic">Zero Guesswork.</span>
+        <p className="text-[#39FF14] text-[9px] font-black tracking-[0.35em] uppercase mb-4">How It Works</p>
+        <h2 className="font-montserrat font-black text-white uppercase text-[clamp(1.8rem,5vw,3rem)] leading-tight mb-3">
+          Three Steps.<br /><span className="text-[#39FF14] italic">Zero Guesswork.</span>
         </h2>
-        <div className="w-12 h-0.5 bg-[#39FF14] mb-12" />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <p className="text-white/70 text-base max-w-xl leading-relaxed mb-12">
+          Getting started takes less than 60 seconds. No setup, no equipment, no learning curve.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {steps.map((s) => (
             <div key={s.num} className="flex flex-col">
-              <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden border border-white/8 bg-[#0a0a0a] mb-4">
+              <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden border border-white/10 bg-[#0a0a0a] mb-5">
                 <img src={s.img} alt={s.title} className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/70 to-transparent px-4 py-3">
+                <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent px-4 py-3">
                   <span className="text-[#39FF14] font-mono font-black text-xs">{s.num}</span>
                 </div>
               </div>
-              <h3 className="text-white font-black uppercase text-sm tracking-[0.1em] mb-1">{s.title}</h3>
-              <p className="text-white/75 text-[12px] leading-relaxed">{s.desc}</p>
+              <h3 className="text-white font-black uppercase text-sm tracking-[0.1em] mb-2">{s.title}</h3>
+              <p className="text-white/70 text-[13px] leading-relaxed">{s.desc}</p>
             </div>
           ))}
         </div>
@@ -241,13 +270,14 @@ function HowItWorksSection() {
   );
 }
 
+// ─── SAFETY ───────────────────────────────────────────────────────────────────
 function SafetySection() {
   return (
-    <section id="safety" className="py-16 px-5 bg-black">
-      <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-10 md:gap-16 items-center">
+    <section id="safety" className="py-20 px-5 bg-black">
+      <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-12 md:gap-20 items-center">
         <div className="flex-1 order-2 md:order-1">
           <div className="flex items-center gap-2 mb-5">
-            <svg className="w-3.5 h-3.5 text-[#FF3131] flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-[#FF3131] flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2L4 7v6c0 4.418 3.582 8 8 9 4.418-1 8-4.582 8-9V7l-8-5z"/>
             </svg>
             <span className="text-[#FF3131] text-[9px] font-black tracking-[0.3em] uppercase">Injury Prevention</span>
@@ -255,29 +285,36 @@ function SafetySection() {
           <h2 className="font-montserrat font-black text-white uppercase text-[clamp(1.6rem,4vw,2.6rem)] leading-[0.95] mb-5">
             Safety First: The <span className="text-[#FF3131] italic">Injury-Proof</span> Algorithm
           </h2>
-          <p className="text-white/80 text-[13px] leading-relaxed mb-6 max-w-md">
-            FitVision AI monitors high-risk zones — spine neutrality, knee tracking, hip alignment — and alerts you the moment something looks wrong. Before injuries happen.
+          <p className="text-white/80 text-[14px] leading-relaxed mb-4 max-w-md">
+            Most gym injuries are preventable. Bad form goes unnoticed until something snaps.
+            FitVision AI monitors your high-risk zones continuously — spine neutrality, knee
+            tracking, hip alignment — and alerts you the moment something looks dangerous.
+          </p>
+          <p className="text-white/60 text-[13px] leading-relaxed mb-7 max-w-md">
+            This isn't just coaching. It's a safety net that watches every rep, every set, every
+            workout — without ever getting distracted.
           </p>
           <div className="space-y-3">
             {[
-              { color: "text-[#FF3131]", label: "Spine Neutrality Monitoring" },
-              { color: "text-[#39FF14]", label: "Joint Stacking Analysis" },
+              { color: "#FF3131", label: "Spine Neutrality Monitoring" },
+              { color: "#39FF14", label: "Joint Stacking Analysis" },
+              { color: "#39FF14", label: "Real-Time Deviation Alerts" },
             ].map((f) => (
               <div key={f.label} className="flex items-center gap-3">
-                <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${f.color === "text-[#FF3131]" ? "bg-[#FF3131]" : "bg-[#39FF14]"}`} />
-                <span className={`${f.color} text-[10px] font-black tracking-[0.2em] uppercase`}>{f.label}</span>
+                <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: f.color }} />
+                <span className="text-white/80 text-[11px] font-bold tracking-[0.15em] uppercase">{f.label}</span>
               </div>
             ))}
           </div>
         </div>
         <div className="flex-shrink-0 w-full max-w-[240px] mx-auto md:mx-0 order-1 md:order-2">
           <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden border border-[#FF3131]/50"
-            style={{ boxShadow: "0 0 30px rgba(255,49,49,0.2)" }}>
+            style={{ boxShadow: "0 0 40px rgba(255,49,49,0.2)" }}>
             <img src="/img-safety.png" alt="Safety detection" className="absolute inset-0 w-full h-full object-cover" />
             <div className="absolute inset-0 bg-[#FF3131]/10" />
             <div className="absolute bottom-4 left-3 right-3">
-              <div className="bg-black/85 border border-[#FF3131] rounded-lg px-4 py-3 text-center"
-                style={{ boxShadow: "0 0 15px rgba(255,49,49,0.3)" }}>
+              <div className="bg-black/90 border border-[#FF3131] rounded-lg px-4 py-3 text-center"
+                style={{ boxShadow: "0 0 20px rgba(255,49,49,0.3)" }}>
                 <p className="text-[#FF3131] text-[10px] font-black tracking-[0.15em] uppercase animate-pulse">
                   ⚠ Back Rounding Detected
                 </p>
@@ -290,64 +327,44 @@ function SafetySection() {
   );
 }
 
+// ─── WHY SECTION ─────────────────────────────────────────────────────────────
 function WhySection() {
   return (
-    <section id="about" className="py-20 px-5 bg-[#030803] border-y border-white/5">
+    <section id="features" className="py-24 px-5 bg-[#030803] border-y border-white/5">
       <div className="max-w-5xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
-            <p className="text-[#FF3131] text-[9px] font-black tracking-[0.35em] uppercase mb-3">The Problem</p>
-            <h2 className="font-montserrat font-black text-white uppercase text-[clamp(1.8rem,5vw,3rem)] leading-tight mb-5">
-              Most People Train<br />
-              <span className="text-[#FF3131] italic">Completely Blind.</span>
+            <p className="text-[#FF3131] text-[9px] font-black tracking-[0.35em] uppercase mb-4">The Problem</p>
+            <h2 className="font-montserrat font-black text-white uppercase text-[clamp(1.8rem,5vw,3rem)] leading-tight mb-6">
+              Most People Train<br /><span className="text-[#FF3131] italic">Completely Blind.</span>
             </h2>
-            <p className="text-white/80 text-sm md:text-base leading-relaxed mb-6">
-              You go to the gym. You do your reps. But nobody's watching. Nobody's correcting you. 
-              Bad form builds up over months until something snaps — a knee, a lower back, a shoulder. 
-              Personal trainers cost $50–150 per session. Most people just guess.
+            <p className="text-white/85 text-base leading-relaxed mb-5">
+              You go to the gym. You do your reps. But nobody's watching. Nobody's correcting you.
+              Bad form builds up over months until something snaps — a knee, a lower back, a shoulder.
             </p>
-            <p className="text-white/80 text-sm md:text-base leading-relaxed">
-              FitVision AI is what happens when you give everyone access to a world-class eye. 
-              Always watching. Always coaching. Never judging.
+            <p className="text-white/70 text-[14px] leading-relaxed mb-5">
+              Personal trainers cost $75–$150 per session. Most people train alone, guessing at
+              whether their form is correct, and paying the price with injuries and stalled progress.
+            </p>
+            <p className="text-white/85 text-[14px] leading-relaxed">
+              FitVision AI gives everyone access to a world-class coaching eye — always watching,
+              always correcting, never distracted, never off-duty.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             {[
-              {
-                stat: "$75–150",
-                label: "Average cost per PT session",
-                color: "text-[#FF3131]",
-                border: "border-[#FF3131]/20",
-                bg: "bg-[#FF3131]/5",
-                desc: "Most people can't afford consistent access to a real coach.",
-              },
-              {
-                stat: "82%",
-                label: "Gym-goers with no form feedback",
-                color: "text-[#FF3131]",
-                border: "border-[#FF3131]/20",
-                bg: "bg-[#FF3131]/5",
-                desc: "Training without feedback is how preventable injuries happen.",
-              },
-              {
-                stat: "< 50ms",
-                label: "FitVision AI response time",
-                color: "text-[#39FF14]",
-                border: "border-[#39FF14]/20",
-                bg: "bg-[#39FF14]/5",
-                desc: "Real-time coaching that catches mistakes before they become injuries.",
-              },
+              { stat: "$75–150", label: "Average cost per personal training session", color: "#FF3131", desc: "Most people simply can't access consistent professional coaching at this price point." },
+              { stat: "82%", label: "Gym-goers receive zero form feedback", color: "#FF3131", desc: "Training without expert feedback is how preventable injuries happen at every level." },
+              { stat: "< 50ms", label: "FitVision AI response time", color: "#39FF14", desc: "Real-time coaching that catches and corrects mistakes before they become injuries or bad habits." },
             ].map((item) => (
-              <div
-                key={item.label}
-                className={`${item.bg} border ${item.border} rounded-xl px-5 py-4 flex items-start gap-4`}
-              >
-                <p className={`${item.color} font-mono font-black text-2xl leading-none flex-shrink-0 pt-0.5`}>
+              <div key={item.label} className="border rounded-xl px-6 py-5 flex items-start gap-5"
+                style={{ borderColor: item.color + "33", backgroundColor: item.color + "0d" }}>
+                <p className="font-mono font-black text-2xl leading-none flex-shrink-0 pt-0.5" style={{ color: item.color }}>
                   {item.stat}
                 </p>
                 <div>
-                  <p className="text-white font-bold text-[11px] uppercase tracking-wider mb-1">{item.label}</p>
-                  <p className="text-white/60 text-[11px] leading-relaxed">{item.desc}</p>
+                  <p className="text-white font-bold text-[12px] uppercase tracking-wider mb-2">{item.label}</p>
+                  <p className="text-white/65 text-[12px] leading-relaxed">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -358,43 +375,35 @@ function WhySection() {
   );
 }
 
+// ─── SOCIAL PROOF ─────────────────────────────────────────────────────────────
 function SocialProofSection() {
   return (
-    <section className="py-16 px-5 bg-black">
+    <section className="py-20 px-5 bg-black">
       <div className="max-w-4xl mx-auto text-center">
         <p className="text-[#39FF14] text-[9px] font-black tracking-[0.35em] uppercase mb-3">Early Reactions</p>
-        <h2 className="font-montserrat font-black text-white uppercase text-[clamp(1.6rem,4vw,2.4rem)] mb-10">
+        <h2 className="font-montserrat font-black text-white uppercase text-[clamp(1.6rem,4vw,2.4rem)] mb-4">
           What Early Testers Say
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <p className="text-white/60 text-sm max-w-lg mx-auto leading-relaxed mb-12">
+          Our closed beta has been running with real users. Here's what they told us.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {[
-            {
-              quote: "I've been doing squats wrong for 2 years. The AI caught it in 3 seconds.",
-              name: "Chidi O.",
-              role: "Gym Enthusiast · Lagos",
-            },
-            {
-              quote: "It's like having a PT in your pocket. I can't believe this is real and it's this affordable.",
-              name: "Amara K.",
-              role: "Fitness Coach · Abuja",
-            },
-            {
-              quote: "The injury detection alone is worth it. My knee pain is finally gone.",
-              name: "Tunde A.",
-              role: "Powerlifter · Port Harcourt",
-            },
+            { quote: "I've been doing squats wrong for two years. The AI corrected my form in the first three seconds.", name: "Chidi O.", role: "Gym Enthusiast" },
+            { quote: "It's like having a personal trainer in your pocket. I genuinely can't believe how real the coaching feels.", name: "Amara K.", role: "Fitness Coach" },
+            { quote: "The injury prevention alone makes this worth it. My knee pain cleared up within two weeks of using it.", name: "Tunde A.", role: "Powerlifter" },
           ].map((t) => (
-            <div key={t.name} className="bg-[#0a0a0a] border border-white/8 rounded-xl p-5 text-left">
-              <div className="flex gap-0.5 mb-3">
+            <div key={t.name} className="bg-[#0d0d0d] border border-white/10 rounded-xl p-6 text-left">
+              <div className="flex gap-0.5 mb-4">
                 {[...Array(5)].map((_, i) => (
                   <svg key={i} className="w-3.5 h-3.5 text-[#39FF14]" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                   </svg>
                 ))}
               </div>
-              <p className="text-white/85 text-sm leading-relaxed mb-4">"{t.quote}"</p>
-              <p className="text-white font-bold text-[11px]">{t.name}</p>
-              <p className="text-white/30 text-[10px]">{t.role}</p>
+              <p className="text-white/90 text-[13px] leading-relaxed mb-5">"{t.quote}"</p>
+              <p className="text-white font-bold text-[12px]">{t.name}</p>
+              <p className="text-white/40 text-[11px] mt-0.5">{t.role}</p>
             </div>
           ))}
         </div>
@@ -403,62 +412,41 @@ function SocialProofSection() {
   );
 }
 
+// ─── FAQ ──────────────────────────────────────────────────────────────────────
 function FAQSection() {
   const faqs = [
-    {
-      q: "Do I need any special equipment?",
-      a: "Nope. Just your smartphone. Prop it on any surface, a chair, a water bottle, anything. No wearables, no sensors, no gym hardware.",
-    },
-    {
-      q: "How does the AI actually see me?",
-      a: "We use advanced computer vision (MediaPipe) that runs directly on your device. Your camera feed is processed locally — nothing is uploaded to a server.",
-    },
-    {
-      q: "Which exercises does it support?",
-      a: "At launch: squats, deadlifts, push-ups, lunges, and rows. We're adding more every week based on early user feedback.",
-    },
-    {
-      q: "Will it work indoors with bad lighting?",
-      a: "Yes. The AI is trained to work in typical indoor gym and home lighting conditions. Darker environments may reduce accuracy slightly.",
-    },
-    {
-      q: "When does it launch?",
-      a: "We're targeting a beta launch in Q2 2026. Join the waitlist to be first in line and get launch-day pricing.",
-    },
-    {
-      q: "Is it really built in Nigeria?",
-      a: "100%. Built by Nigerian developers. We're proud of that — and we think it gives us a unique perspective on building affordable, accessible fitness tech.",
-    },
+    { q: "Do I need any special equipment?", a: "No. Just your smartphone. Prop it on any surface — a chair, a stack of books, anything. No wearables, no sensors, no gym hardware required." },
+    { q: "How does the AI actually see me?", a: "FitVision uses Google's Gemini AI combined with real-time computer vision to track 33 body landmarks across your entire body. The AI watches your form continuously and speaks to you like a real trainer throughout your workout." },
+    { q: "Which exercises does it support at launch?", a: "Beta launch includes Squats, Push-ups, Deadlift, Lunges, and Plank. We add new exercises every week based on what users request most." },
+    { q: "Will it work indoors with standard lighting?", a: "Yes. The AI performs well under typical indoor gym and home lighting. Very dark rooms may reduce tracking accuracy slightly — a reasonably lit space gives the best results." },
+    { q: "How much does it cost after beta?", a: "Free tier includes 3 AI coaching sessions per week so you can experience the full product before upgrading. Pro Coach is $9.99/month or $95.88/year ($7.99/month). Early access members get 50% off their first year." },
+    { q: "Can it replace a human personal trainer?", a: "For most people's form correction and coaching needs — yes, for a fraction of the cost. A human trainer still adds value for high-level programming and accountability, but FitVision covers what matters most: watching your form every single rep." },
   ];
-
   const [open, setOpen] = useState<number | null>(null);
-
   return (
-    <section id="faq" className="py-20 px-5 bg-[#030803]">
+    <section id="faq" className="py-24 px-5 bg-[#030803]">
       <div className="max-w-3xl mx-auto">
-        <p className="text-[#39FF14] text-[9px] font-black tracking-[0.35em] uppercase mb-3">FAQ</p>
-        <h2 className="font-montserrat font-black text-white uppercase text-[clamp(1.8rem,5vw,2.8rem)] mb-10">
-          Obvious Questions,<br />
-          <span className="text-[#39FF14] italic">Honest Answers.</span>
+        <p className="text-[#39FF14] text-[9px] font-black tracking-[0.35em] uppercase mb-4">FAQ</p>
+        <h2 className="font-montserrat font-black text-white uppercase text-[clamp(1.8rem,5vw,2.8rem)] mb-4">
+          Obvious Questions,<br /><span className="text-[#39FF14] italic">Honest Answers.</span>
         </h2>
+        <p className="text-white/65 text-sm leading-relaxed mb-12">
+          If something isn't answered here, reach out. We respond to every question.
+        </p>
         <div className="space-y-2">
           {faqs.map((faq, i) => (
-            <div key={i}
-              className="bg-[#0a0a0a] border border-white/8 rounded-xl overflow-hidden transition-all">
-              <button
-                className="w-full flex items-center justify-between px-5 py-4 text-left"
-                onClick={() => setOpen(open === i ? null : i)}
-              >
-                <span className="text-white font-semibold text-[13px] pr-4">{faq.q}</span>
-                <svg
-                  className={`w-4 h-4 text-[#39FF14] flex-shrink-0 transition-transform ${open === i ? "rotate-45" : ""}`}
+            <div key={i} className="bg-[#0d0d0d] border border-white/10 rounded-xl overflow-hidden">
+              <button className="w-full flex items-center justify-between px-6 py-4.5 text-left gap-4"
+                onClick={() => setOpen(open === i ? null : i)}>
+                <span className="text-white font-semibold text-[14px] leading-snug">{faq.q}</span>
+                <svg className={`w-4 h-4 text-[#39FF14] flex-shrink-0 transition-transform ${open === i ? "rotate-45" : ""}`}
                   fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
               </button>
               {open === i && (
-                <div className="px-5 pb-4 border-t border-white/5">
-                  <p className="text-white/80 text-[13px] leading-relaxed pt-3">{faq.a}</p>
+                <div className="px-6 pb-5 border-t border-white/8">
+                  <p className="text-white/75 text-[13px] leading-relaxed pt-4">{faq.a}</p>
                 </div>
               )}
             </div>
@@ -469,29 +457,69 @@ function FAQSection() {
   );
 }
 
+// ─── PRICING ──────────────────────────────────────────────────────────────────
 function PricingSection({ onProClick }: { onProClick: () => void }) {
+  const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
+
+  // Prices
+  const proMonthly = 9.99;
+  const proAnnual = 95.88;          // $7.99/mo × 12
+  const earlyMonthly = 4.99;
+  const earlyAnnual = 47.88;        // $3.99/mo × 12
+
+  const displayPrice = billing === "monthly" ? `$${earlyMonthly.toFixed(2)}` : `$${earlyAnnual.toFixed(2)}`;
+  const strikePrice = billing === "monthly" ? `$${proMonthly.toFixed(2)}/mo` : `$${proAnnual.toFixed(2)}/yr`;
+  const billingNote = billing === "monthly"
+    ? "Billed monthly · Cancel anytime"
+    : `Billed as $${earlyAnnual.toFixed(2)}/year · That's $${(earlyAnnual / 12).toFixed(2)}/month`;
+
   return (
-    <section id="pricing" className="py-20 px-5 bg-black text-center">
+    <section id="pricing" className="py-24 px-5 bg-black text-center">
       <div className="max-w-4xl mx-auto">
-        <p className="text-[#39FF14] text-[9px] font-black tracking-[0.35em] uppercase mb-3">Pricing</p>
-        <h2 className="font-montserrat font-black text-white uppercase text-[clamp(1.8rem,5vw,3rem)] mb-2">
+        <p className="text-[#39FF14] text-[9px] font-black tracking-[0.35em] uppercase mb-4">Pricing</p>
+        <h2 className="font-montserrat font-black text-white uppercase text-[clamp(1.8rem,5vw,3rem)] mb-3">
           Simple, <span className="text-[#39FF14] italic">Honest</span> Pricing
         </h2>
-        <p className="text-white/30 text-[10px] uppercase tracking-[0.3em] mb-12">Performance shouldn't be a luxury.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-2xl mx-auto">
-          <div className="bg-[#0d0d0d] border border-white/10 rounded-2xl p-7 text-left flex flex-col">
-            <p className="text-white font-black text-sm uppercase tracking-widest mb-0.5">Starter</p>
-            <p className="text-white/30 text-[10px] uppercase tracking-wider mb-5">Core tracking features</p>
+        <p className="text-white/65 text-base max-w-lg mx-auto leading-relaxed mb-10">
+          Start free and upgrade when you're ready. No contracts, no hidden fees.
+        </p>
+
+        {/* Billing toggle */}
+        <div className="inline-flex items-center gap-1 bg-[#111] border border-white/10 rounded-full p-1 mb-12">
+          <button onClick={() => setBilling("monthly")}
+            className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${billing === "monthly" ? "bg-[#39FF14] text-black" : "text-white/50 hover:text-white/80"}`}>
+            Monthly
+          </button>
+          <button onClick={() => setBilling("annual")}
+            className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-wider transition-all flex items-center gap-2 ${billing === "annual" ? "bg-[#39FF14] text-black" : "text-white/50 hover:text-white/80"}`}>
+            Annual
+            <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-full ${billing === "annual" ? "bg-black/20 text-black" : "bg-[#39FF14]/15 text-[#39FF14]"}`}>
+              SAVE 20%
+            </span>
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+
+          {/* FREE */}
+          <div className="bg-[#0d0d0d] border border-white/12 rounded-2xl p-7 text-left flex flex-col">
+            <p className="text-white font-black text-sm uppercase tracking-widest mb-1">Starter</p>
+            <p className="text-white/50 text-[11px] uppercase tracking-wider mb-6">Free forever · No credit card</p>
             <div className="flex items-end gap-1 mb-7">
               <span className="text-5xl font-black text-white leading-none">$0</span>
             </div>
-            <ul className="space-y-2.5 mb-8 flex-1">
+            <ul className="space-y-3 mb-5 flex-1">
               {[
-                { label: "Basic Rep Counting", on: true },
-                { label: "Summary Report", on: true },
-                { label: "Real-Time Voice Coaching", on: false },
+                { label: "5 exercises supported", on: true },
+                { label: "Basic rep counting", on: true },
+                { label: "Session summary + form score", on: true },
+                { label: "3 AI coaching sessions per week", on: true },
+                { label: "7-day session history", on: true },
+                { label: "Unlimited coaching sessions", on: false },
+                { label: "Injury prevention alerts", on: false },
+                { label: "Personalised workout plans", on: false },
               ].map((f) => (
-                <li key={f.label} className={`flex items-center gap-2.5 text-[13px] ${f.on ? "text-white/70" : "text-white/20 line-through"}`}>
+                <li key={f.label} className={`flex items-center gap-3 text-[13px] ${f.on ? "text-white/80" : "text-white/25 line-through"}`}>
                   <svg className={`w-4 h-4 flex-shrink-0 ${f.on ? "text-[#39FF14]" : "text-white/15"}`} fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/>
                   </svg>
@@ -499,24 +527,54 @@ function PricingSection({ onProClick }: { onProClick: () => void }) {
                 </li>
               ))}
             </ul>
-            <button className="w-full border border-white/15 text-white/50 font-black text-[10px] py-3.5 rounded-lg uppercase tracking-[0.15em] hover:border-white/30 hover:text-white/80 transition-colors">
-              Start Tracking Free
+            <p className="text-white/35 text-[11px] leading-relaxed mb-6">
+              Free tier includes 3 live AI coaching sessions per week — enough to experience the full product before deciding to upgrade.
+            </p>
+            <button className="w-full border border-white/15 text-white/60 font-black text-[10px] py-3.5 rounded-lg uppercase tracking-[0.15em] hover:border-white/35 hover:text-white/85 transition-colors">
+              Start Free — No Card Needed
             </button>
           </div>
+
+          {/* PRO */}
           <div className="relative bg-[#071007] border-2 border-[#39FF14] rounded-2xl p-7 text-left flex flex-col"
-            style={{ boxShadow: "0 0 30px rgba(57,255,20,0.12)" }}>
+            style={{ boxShadow: "0 0 40px rgba(57,255,20,0.1)" }}>
             <div className="absolute -top-3.5 right-5 bg-[#39FF14] text-black text-[8px] font-black px-3 py-1 rounded-full uppercase tracking-[0.15em]">
               Most Popular
             </div>
-            <p className="text-[#39FF14] font-black text-sm uppercase tracking-widest mb-0.5">Pro Coach</p>
-            <p className="text-white/30 text-[10px] uppercase tracking-wider mb-5">The complete AI experience</p>
-            <div className="flex items-end gap-1.5 mb-7">
-              <span className="text-5xl font-black text-white leading-none">$9.99</span>
-              <span className="text-white/30 text-sm mb-1">/mo</span>
+            <p className="text-[#39FF14] font-black text-sm uppercase tracking-widest mb-1">Pro Coach</p>
+            <p className="text-white/50 text-[11px] uppercase tracking-wider mb-4">The complete AI experience</p>
+
+            {/* Price display */}
+            <div className="flex items-end gap-2 mb-2">
+              <span className="text-5xl font-black text-white leading-none">{displayPrice}</span>
+              <span className="text-white/40 text-sm mb-1">{billing === "monthly" ? "/mo" : "/yr"}</span>
             </div>
-            <ul className="space-y-2.5 mb-8 flex-1">
-              {["All Starter Features", "Real-Time Voice Coaching", "Injury-Prevention Alerts", "Personalized AI Plans"].map((f) => (
-                <li key={f} className="flex items-center gap-2.5 text-[13px] text-white">
+
+            {/* Strike through regular price */}
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-white/35 text-[12px] line-through">{strikePrice}</span>
+              <span className="bg-[#39FF14]/15 border border-[#39FF14]/30 text-[#39FF14] text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide">
+                50% off · Early Access
+              </span>
+            </div>
+
+            {/* Billing note */}
+            <p className="text-white/45 text-[11px] mb-1">{billingNote}</p>
+            <p className="text-white/30 text-[10px] mb-6">
+              ⚡ Early access pricing · Limited availability
+            </p>
+
+            <ul className="space-y-3 mb-8 flex-1">
+              {[
+                "Everything in Starter",
+                "Unlimited AI coaching sessions",
+                "Real-time voice coaching",
+                "Injury-prevention alerts",
+                "Personalised workout plans",
+                "Full session history",
+                "Priority support",
+              ].map((f) => (
+                <li key={f} className="flex items-center gap-3 text-[13px] text-white/90">
                   <svg className="w-4 h-4 flex-shrink-0 text-[#39FF14]" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/>
                   </svg>
@@ -526,43 +584,55 @@ function PricingSection({ onProClick }: { onProClick: () => void }) {
             </ul>
             <button onClick={onProClick}
               className="w-full bg-[#39FF14] text-black font-black text-[10px] py-3.5 rounded-lg uppercase tracking-[0.15em] hover:brightness-110 active:scale-95 transition-all">
-              Subscribe for Live Coaching
+              Lock In Early Access Pricing
             </button>
           </div>
         </div>
+
+        <p className="text-white/25 text-[11px] mt-8">
+          All prices in USD · Cancel anytime · Annual plan billed once per year
+        </p>
       </div>
     </section>
   );
 }
 
+// ─── BOTTOM CTA ───────────────────────────────────────────────────────────────
 function WaitlistCTASection() {
   return (
-    <section className="py-20 px-5 bg-[#030803] text-center">
+    <section className="py-24 px-5 bg-[#030803] text-center">
       <div className="max-w-2xl mx-auto">
-        <span className="text-4xl mb-4 block">💪</span>
-        <h2 className="font-montserrat font-black text-white uppercase text-[clamp(1.8rem,5vw,3rem)] leading-tight mb-4">
-          Ready to Train<br />
-          <span className="text-[#39FF14] italic">Smarter?</span>
+        <span className="text-5xl mb-6 block">💪</span>
+        <h2 className="font-montserrat font-black text-white uppercase text-[clamp(1.8rem,5vw,3rem)] leading-tight mb-5">
+          Ready to Train<br /><span className="text-[#39FF14] italic">Smarter?</span>
         </h2>
-        <p className="text-white/80 text-sm md:text-base leading-relaxed mb-8">
-          Join hundreds of early users already on the waitlist. Be first to access FitVision AI when we launch.
+        <p className="text-white/80 text-base leading-relaxed mb-3">
+          Join the waitlist for early access to FitVision AI. Waitlist members get 50% off
+          their first year of Pro Coach when we launch.
         </p>
-        <div className="flex justify-center">
+        <p className="text-white/50 text-sm leading-relaxed mb-10">
+          Early access pricing is available for a limited time. Once spots are filled, the
+          standard rate applies.
+        </p>
+        <div className="flex justify-center mb-4">
           <WaitlistForm compact />
         </div>
-        <p className="text-white/25 text-[10px] tracking-wider mt-3">No credit card. No spam. Just early access.</p>
+        <p className="text-white/35 text-[11px] tracking-wider">
+          No credit card · No spam · Cancel anytime
+        </p>
       </div>
     </section>
   );
 }
 
+// ─── PRO MODAL ────────────────────────────────────────────────────────────────
 function ProModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-5 bg-black/85 backdrop-blur-sm" onClick={onClose}>
       <div className="bg-[#0d0d0d] border border-[#39FF14]/25 rounded-2xl p-8 max-w-sm w-full text-center relative"
-        style={{ boxShadow: "0 0 40px rgba(57,255,20,0.1)" }}
+        style={{ boxShadow: "0 0 50px rgba(57,255,20,0.1)" }}
         onClick={(e) => e.stopPropagation()}>
-        <button onClick={onClose} className="absolute top-4 right-4 text-white/20 hover:text-white/60 transition-colors" aria-label="Close">
+        <button onClick={onClose} className="absolute top-4 right-4 text-white/25 hover:text-white/60 transition-colors" aria-label="Close">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
             <path d="M18 6L6 18M6 6l12 12"/>
           </svg>
@@ -572,42 +642,48 @@ function ProModal({ onClose }: { onClose: () => void }) {
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
           </svg>
         </div>
-        <h3 className="font-montserrat font-black text-white uppercase text-xl tracking-wider mb-3">Coming Soon</h3>
-        <p className="text-white/80 text-sm leading-relaxed mb-7">
-          We're perfecting the live-video feature in private beta. You're noted as interested and will be <span className="text-[#39FF14] font-semibold">first in line</span> for Pro.
+        <h3 className="font-montserrat font-black text-white uppercase text-xl tracking-wider mb-3">Coming Very Soon</h3>
+        <p className="text-white/80 text-sm leading-relaxed mb-2">
+          We're in private beta. Join the waitlist now to secure early access pricing —
+          <span className="text-[#39FF14] font-semibold"> 50% off your first year</span>.
         </p>
-        <button onClick={onClose}
-          className="w-full bg-[#39FF14] text-black font-black text-[10px] py-3.5 rounded-lg uppercase tracking-[0.15em] hover:brightness-110 transition-all">
-          Got It, I'll Wait!
+        <p className="text-white/50 text-[12px] leading-relaxed mb-6">
+          Standard pricing applies once early access closes.
+        </p>
+        <div className="mb-4">
+          <WaitlistForm compact />
+        </div>
+        <button onClick={onClose} className="text-white/25 text-[10px] uppercase tracking-wider hover:text-white/50 transition-colors">
+          Maybe later
         </button>
       </div>
     </div>
   );
 }
 
+// ─── FOOTER ───────────────────────────────────────────────────────────────────
 function Footer() {
   return (
-    <footer className="bg-black border-t border-white/5 py-10 px-5 text-center">
+    <footer className="bg-black border-t border-white/8 py-12 px-5 text-center">
       <p className="font-montserrat font-black text-white text-[11px] tracking-[0.3em] uppercase mb-2">FitVision AI</p>
-      <p className="text-white/25 text-[10px] mb-5">Built with love from Nigeria</p>
-      <div className="flex flex-wrap items-center justify-center gap-6 mb-5">
+      <p className="text-white/30 text-[10px] mb-8">Engineered for performance.</p>
+      <div className="flex flex-wrap items-center justify-center gap-8 mb-6">
         {["Terms", "Privacy", "Twitter", "Instagram"].map((link) => (
-          <a key={link} href="#" className="text-white/25 hover:text-white/60 text-[9px] uppercase tracking-[0.2em] transition-colors">{link}</a>
+          <a key={link} href="#" className="text-white/30 hover:text-white/65 text-[10px] uppercase tracking-[0.2em] transition-colors">{link}</a>
         ))}
       </div>
-      <p className="text-white/15 text-[9px] tracking-wider">© 2026 FitVision AI. Engineered for performance.</p>
+      <p className="text-white/15 text-[9px] tracking-wider">© 2026 FitVision AI. All rights reserved.</p>
     </footer>
   );
 }
 
+// ─── APP ──────────────────────────────────────────────────────────────────────
 export default function LandingPage() {
   const [showProModal, setShowProModal] = useState(false);
-
   const handleProClick = async () => {
-    await logEvent("pro_click_intent", { tier: "pro_coach", price: 14.99 });
+    await logEvent("pro_click_intent", { tier: "pro_coach", price: 9.99, early_price: 4.99 });
     setShowProModal(true);
   };
-
   return (
     <div className="bg-black min-h-screen" style={{ fontFamily: "'Inter', 'Montserrat', sans-serif" }}>
       <Navbar />
