@@ -27,9 +27,11 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-black/95 backdrop-blur-sm border-b border-white/8">
-      <span className="font-montserrat font-black text-white text-sm tracking-[0.25em] uppercase">
-        FitVision AI
-      </span>
+      <img 
+        src="/logo-dark-bg.svg" 
+        alt="FitVision AI"
+        className="h-7 w-auto"  // controls height, width scales automatically
+      />
       <div className="hidden md:flex items-center gap-8">
         {["How It Works", "Why It Works", "Form Score", "Pricing"].map((item) => (
           <a
@@ -172,20 +174,21 @@ function HeroSection() {
         </div>
 
         {/* REPOSITIONED HEADLINE — form improvement over time */}
-        <h1 className="font-montserrat font-black text-white uppercase leading-[0.93] mb-7">
+        <h1 className="font-montserrat font-black text-white uppercase leading-[0.93] mb-5">
           <span className="block text-[clamp(2.2rem,8vw,4.8rem)]">The Only App That</span>
           <span className="block text-[clamp(2.2rem,8vw,4.8rem)]">Shows You How Your</span>
           <span className="block text-[clamp(2.2rem,8vw,4.8rem)] text-[#39FF14] italic">Form Improves.</span>
         </h1>
 
-        {/* NEW SUBHEADING — the fitness mirror positioning */}
-        <p className="text-white text-base md:text-lg max-w-xl leading-relaxed mb-3 font-medium">
-          Coach David watches every rep through your phone camera, corrects your form in real time,
-          and scores every session. Watch yourself get better — rep by rep, session by session.
+        {/* Add this bridge line — keeps real-time coaching front and center */}
+        <p className="text-[#39FF14] text-sm font-bold tracking-wider uppercase mb-4">
+          Powered by an AI coach that watches every rep in real time
         </p>
-        <p className="text-white/60 text-sm max-w-lg leading-relaxed mb-10">
-          Not a workout app. Not just a virtual trainer. Your fitness mirror —
-          the only record of how much better you've gotten.
+
+        <p className="text-white text-base md:text-lg max-w-xl leading-relaxed mb-3 font-medium">
+          Coach David watches your form through your phone camera, 
+          corrects you rep by rep, and scores every session — 
+          so you can actually see yourself getting better.
         </p>
 
         <div id="waitlist" className="flex flex-col items-center gap-3 w-full mb-12">
